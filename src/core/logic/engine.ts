@@ -102,6 +102,24 @@ jsonLogic.add_operation('containsIgnoreCase', (text: string, search: string) => 
 });
 
 /**
+ * Custom operation: Extract currency code
+ */
+jsonLogic.add_operation('extractCurrency', (text: string) => {
+    if (!text) return null;
+
+    // Common currency codes
+    const currencies = ['EUR', 'USD', 'GBP', 'CHF', 'JPY'];
+
+    for (const currency of currencies) {
+        if (new RegExp(`\\b${currency}\\b`, 'i').test(text)) {
+            return currency;
+        }
+    }
+
+    return null;
+});
+
+/**
  * Execute JSON Logic rule
  * @param rule JsonLogic rule object
  * @param data Data context

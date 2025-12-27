@@ -30,7 +30,7 @@ export function computeDiff(original: any, modified: any): PatchOperation[] {
  */
 export function applyDiff(target: any, patch: PatchOperation[]): any {
     const clone = JSON.parse(JSON.stringify(target));
-    applyPatch(clone, patch);
+    applyPatch(clone, patch as any);
     return clone;
 }
 

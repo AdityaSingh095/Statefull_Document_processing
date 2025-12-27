@@ -10,10 +10,7 @@ import {
     VendorMemory,
     CorrectionMemory,
     ResolutionMemory,
-    VendorMemorySchema,
-    CorrectionMemorySchema,
-    ResolutionMemorySchema,
-} from '../types/index.js';
+} from '../../types/index.js';
 import { generateFingerprints } from '../../utils/fuzzy.js';
 import { getCurrentTimestamp } from '../../utils/date.js';
 import crypto from 'crypto';
@@ -254,9 +251,9 @@ export class MemoryStore {
     }
 
     /**
-     * Get resolution memory by rule ID
-     */
-    getResolutionMemory(ruleId: string): ResolutionMemory | null {
+   * Get resolution memory by rule ID
+   */
+    getResolutionMemory(ruleId: string): ResolutionMemory {
         const stmt = this.db.prepare('SELECT * FROM resolution_memories WHERE rule_id = ?');
         const row = stmt.get(ruleId) as any;
 

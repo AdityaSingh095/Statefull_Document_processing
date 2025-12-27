@@ -93,7 +93,7 @@ export class Agent {
         console.log(`- Generated ${induction.correctionRules.length} correction rule(s)`);
 
         // Get or create vendor memory
-        let vendorMemory = this.recallEngine.findVendorMemory(humanCorrection.vendor);
+        let vendorMemory = this.findVendorMemory(humanCorrection.vendor);
 
         if (!vendorMemory) {
             // Create new vendor memory
