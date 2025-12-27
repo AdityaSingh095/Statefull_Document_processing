@@ -1,0 +1,36 @@
+{
+  "name": "ai-document-automation-memory-layer",
+  "version": "1.0.0",
+  "description": "Intelligent Document Processing with Learned Memory using Case-Based Reasoning",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "demo": "tsx demo/runner.ts",
+    "test:scenarios": "tsx demo/runner.ts --test",
+    "dev": "tsx src/index.ts"
+  },
+  "keywords": [
+    "document-automation",
+    "case-based-reasoning",
+    "intelligent-agents",
+    "machine-learning",
+    "invoice-processing"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "better-sqlite3": "^11.8.1",
+    "fuse.js": "^7.0.0",
+    "json-logic-js": "^2.0.5",
+    "rfc6902": "^5.1.1",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/json-logic-js": "^2.0.7",
+    "@types/node": "^22.10.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
