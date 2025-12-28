@@ -7,9 +7,9 @@
  */
 
 import { Invoice, VendorPattern, CorrectionMemory, InductionResult } from '../../types/index.js';
-import { computeDiff, extractChanges, PatchOperation } from '../../utils/diff.js';
+import { computeDiff, extractChanges } from '../../utils/diff.js';
 import { getCurrentTimestamp } from '../../utils/date.js';
-import { createRegexRule, createMapRule, createArithmeticRule, executeRule } from './engine.js';
+import { createRegexRule, createMapRule, createArithmeticRule } from './engine.js';
 import crypto from 'crypto';
 
 /**
@@ -99,7 +99,7 @@ export function induceRules(
  * Induce regex pattern for date field (Leistungsdatum logic)
  */
 function induceRegexForDate(
-    field: string,
+    _field: string,
     dateValue: string,
     rawText: string
 ): VendorPattern | null {
@@ -384,7 +384,7 @@ function induceMapping(
     field: string,
     description: string,
     sku: string,
-    invoice: Invoice
+    _invoice: Invoice
 ): VendorPattern | null {
     if (!description || !sku) return null;
 

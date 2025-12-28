@@ -188,7 +188,7 @@ export class DecisionEngine {
     recordResolutions(
         proposals: Map<string, FieldConfidence>,
         humanCorrection: Invoice,
-        outcome: 'ACCEPTED' | 'REJECTED'
+        _outcome: 'ACCEPTED' | 'REJECTED'
     ): void {
         for (const [field, proposal] of proposals.entries()) {
             if (proposal.ruleId) {

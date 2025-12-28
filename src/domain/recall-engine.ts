@@ -4,8 +4,8 @@
  */
 
 import { MemoryStore } from '../core/memory/store.js';
-import { Invoice, VendorMemory, CorrectionMemory, ProcessingContext } from '../types/index.js';
-import { fuzzyMatch, normalizeVendorName } from '../utils/fuzzy.js';
+import { Invoice, VendorMemory, ProcessingContext } from '../types/index.js';
+import { fuzzyMatch } from '../utils/fuzzy.js';
 
 export class RecallEngine {
     constructor(private store: MemoryStore) { }

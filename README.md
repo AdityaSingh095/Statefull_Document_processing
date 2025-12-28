@@ -79,7 +79,7 @@ npm install
 ### Run Demo
 
 ```bash
-npm run demo
+npm run demo:prod
 ```
 
 The demo showcases:

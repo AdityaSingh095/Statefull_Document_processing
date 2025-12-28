@@ -5,18 +5,17 @@
 
 import Database from 'better-sqlite3';
 import path from 'path';
-import { fileURLToPath } from 'url';
+
 import {
     VendorMemory,
     CorrectionMemory,
     ResolutionMemory,
 } from '../../types/index.js';
-import { generateFingerprints } from '../../utils/fuzzy.js';
+
 import { getCurrentTimestamp } from '../../utils/date.js';
 import crypto from 'crypto';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+
 
 /**
  * Memory Store class for SQLite operations
