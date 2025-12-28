@@ -3,7 +3,7 @@
  * Executes json-logic rules and computes confidence scores
  */
 
-import { ProcessingContext, FieldConfidence, Invoice } from '../types/index.js';
+import { ProcessingContext, FieldConfidence} from '../types/index.js';
 import { executeRule } from '../core/logic/engine.js';
 import { getCurrentTimestamp, daysBetween } from '../utils/date.js';
 

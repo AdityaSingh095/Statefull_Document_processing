@@ -1,6 +1,6 @@
 # AI Document Automation Memory Layer
 
-<parameter name="rational intelligent document processing system based on Case-Based Reasoning (CBR) that learns from human corrections to improve automation rates over time.
+A rational intelligent document processing system based on Case-Based Reasoning (CBR) that learns from human corrections to improve automation rates over time.
 
 ## 🧠 Overview
 
@@ -37,35 +37,35 @@ This system implements a **"Think-Act-Learn" cognitive loop** using Symbolic AI 
 
 ### Memory Types
 
-1. **Vendor Memory** (Contextual Knowledge)
-   - Vendor-specific extraction patterns
-   - Default values (currency, payment terms)
-   - Regex rules for field extraction
+1.  **Vendor Memory** (Contextual Knowledge)
+    *   Vendor-specific extraction patterns
+    *   Default values (currency, payment terms)
+    *   Regex rules for field extraction
 
-2. **Correction Memory** (Global Knowledge)
-   - Formula-based rules (e.g., VAT calculations)
-   - Triggered by data state, not vendor identity
+2.  **Correction Memory** (Global Knowledge)
+    *   Formula-based rules (e.g., VAT calculations)
+    *   Triggered by data state, not vendor identity
 
-3. **Resolution Memory** (Meta-Cognition)
-   - Tracks rule performance (accept/reject counts)
-   - Enables reinforcement learning
-   - Confidence decay over time
+3.  **Resolution Memory** (Meta-Cognition)
+    *   Tracks rule performance (accept/reject counts)
+    *   Enables reinforcement learning
+    *   Confidence decay over time
 
 ### Learning Strategies
 
-1. **Regex Induction**: Synthesizes patterns from text (e.g., "Leistungsdatum: 01.12.2023" → regex)
-2. **Arithmetic Induction**: Derives formulas from corrections (e.g., Tax = Total - Total/1.19)
-3. **Mapping Induction**: Creates SKU mappings (e.g., "Seefracht" → "FREIGHT")
+1.  **Regex Induction**: Synthesizes patterns from text (e.g., "Leistungsdatum: 01.12.2023" → regex)
+2.  **Arithmetic Induction**: Derives formulas from corrections (e.g., Tax = Total - Total/1.19)
+3.  **Mapping Induction**: Creates SKU mappings (e.g., "Seefracht" → "FREIGHT")
 
 ### Decision Logic
 
-- **Confidence Scoring**: Laplace smoothing + time decay
-- **Escalation Thresholds**: 
-  - New vendor → review required
-  - Critical field confidence < 0.90 → review
-  - Overall confidence < 0.80 → review
-  - Duplicate detected → review
-  - Amount mismatch → review
+-   **Confidence Scoring**: Laplace smoothing + time decay
+-   **Escalation Thresholds**:
+    *   New vendor → review required
+    *   Critical field confidence < 0.90 → review
+    *   Overall confidence < 0.80 → review
+    *   Duplicate detected → review
+    *   Amount mismatch → review
 
 ## 🚀 Quick Start
 
@@ -78,70 +78,88 @@ npm install
 
 ### Run Demo
 
+**Production Demo** (12 Real Invoices):
 ```bash
 npm run demo:prod
 ```
 
-The demo showcases:
-- ✅ Supplier GmbH: Leistungsdatum extraction
-- ✅ Parts AG: VAT calculation (MwSt. inkl.)
-- ✅ Freight & Co: Skonto terms + SKU mapping
-- ✅ PO number extraction
-- ✅ Duplicate detection
+**Original Demo** (Quick Test):
+```bash
+npm run demo
+```
+
+The production demo showcases:
+- ✅ Supplier GmbH: Leistungsdatum extraction (INV-A-001, INV-A-002)
+- ✅ Parts AG: VAT calculation with "MwSt. inkl." (INV-B-001, INV-B-002)
+- ✅ Parts AG: Currency extraction from rawText (INV-B-003)
+- ✅ Freight & Co: Skonto terms detection (INV-C-001)
+- ✅ Freight & Co: SKU mapping Seefracht→FREIGHT (INV-C-002)
+- ✅ PO matching logic (INV-A-003 → PO-A-051)
+- ✅ Duplicate detection (INV-A-004, INV-B-004)
 
 ## 📊 Demo Scenarios
 
-### Scenario 1: Leistungsdatum Learning
+### Scenario 1: Leistungsdatum Learning (Supplier GmbH)
 
 **Cold Start** (INV-A-001):
 ```
 Service Date: null
 Requires Review: true
-Reasoning: "New vendor"
+Reasoning: "New vendor: no existing memory found"
 ```
 
 **Human Correction**:
+```json
+{ "serviceDate": "2024-01-01" }
+// Extracted from rawText: "Leistungsdatum: 01.01.2024"
 ```
-Service Date: "2023-12-01" (extracted from "Leistungsdatum: 01.12.2023")
+
+**Agent Learning**:
+```
+✓ Learned pattern: /Leistungsdatum:\s*(\d{2}\.\d{2}\.\d{4})/
+✓ Stored in Vendor Memory for Supplier GmbH
 ```
 
 **Warm Start** (INV-A-002):
 ```
-Service Date: "2024-01-15" ✓ (auto-extracted)
-Requires Review: false
-Confidence: 0.95
+Service Date: "15.01.2024" ✓ (auto-extracted)
+Confidence: 0.71
+Reasoning: "Overall confidence below threshold (requires improvement)"
 ```
 
-### Scenario 2: VAT Calculation
+### Scenario 2: VAT Calculation (Parts AG)
 
 **Cold Start** (INV-B-001):
 ```
-Total: 119
-Tax: 0 (missing)
+Total: 2400
+Tax: 400
+RawText: "Prices incl. VAT (MwSt. inkl.)"
 ```
 
 **Human Correction**:
-```
-Tax: 19 (formula: 119 - 119/1.19)
-Net: 100
+```json
+{
+  "grossTotal": 2380,
+  "taxTotal": 380
+}
+// Reason: VAT included in total; extractor overestimated
 ```
 
-**Warm Start** (INV-B-002):
+**Agent Learning**:
 ```
-Total: 238
-Tax: 38 ✓ (auto-calculated)
-Net: 200 ✓
-Confidence: 0.95
+✓ Learned formula: Tax = Total - (Total / 1.19)
+✓ Trigger: "MwSt. inkl." pattern detected
+✓ Stored in Correction Memory (global rule)
 ```
 
 ## 🛠️ Technology Stack
 
-- **Runtime**: Node.js + TypeScript
-- **Database**: SQLite with JSON1 extension
-- **Logic Engine**: json-logic-js (declarative, no eval())
-- **Fuzzy Matching**: Fuse.js
-- **Validation**: Zod (runtime type checking)
-- **Diffing**: rfc6902 (JSON Patch)
+-   **Runtime**: Node.js + TypeScript (strict mode)
+-   **Database**: SQLite with JSON1 extension
+-   **Logic Engine**: json-logic-js (declarative, no eval())
+-   **Fuzzy Matching**: Fuse.js
+-   **Validation**: Zod (runtime type checking)
+-   **Diffing**: rfc6902 (JSON Patch)
 
 ## 📁 Project Structure
 
@@ -166,13 +184,19 @@ flowai/
 │       ├── fuzzy.ts              # Fuzzy matching
 │       └── date.ts               # Date parsing
 ├── demo/
-│   ├── runner.ts                 # Demo script
-│   └── test-data/
-│       └── invoices.ts           # Test invoices
+│   ├── runner.ts                 # Original demo script
+│   └── production-data/
+│       ├── production-runner.ts  # Production demo
+│       ├── adapter.ts            # Data format adapter
+│       ├── invoices_extracted.json
+│       ├── purchase_orders.json
+│       └── human_corrections.json
 ├── database/
-│   └── memory.db                 # SQLite database (created at runtime)
+│   ├── memory.db                 # Default SQLite database
+│   └── production-memory.db      # Production demo database
 ├── package.json
-└── tsconfig.json
+├── tsconfig.json
+└── README.md
 ```
 
 ## 🔍 API Usage
@@ -199,45 +223,74 @@ agent.close();
 
 ## 📝 Output Contract
 
+Every processed invoice returns this standardized contract:
+
 ```typescript
 {
+  // Invoice Fields
   invoiceId: string;
   vendor: string;
   invoiceNumber: string;
+  date?: string;
+  serviceDate?: string;
+  dueDate?: string;
   totalAmount?: number;
   taxAmount?: number;
-  serviceDate?: string;
-  // ... other fields
+  netAmount?: number;
+  currency?: string;
+  lineItems?: Array<{
+    description: string;
+    quantity?: number;
+    unitPrice?: number;
+    amount?: number;
+    sku?: string;
+    taxRate?: number;
+  }>;
+  paymentTerms?: string;
+  poNumber?: string;
   
+  // Decision & Confidence
   requiresHumanReview: boolean;  // Escalation decision
-  reasoning: string;              // Explanation
+  reasoning: string;              // Plain English explanation
   confidence: number;             // 0.0 - 1.0
   
-  auditTrail: [                   // Full transparency
-    {
-      step: "RECALL" | "APPLY" | "DECIDE",
-      action: string,
-      field?: string,
-      reasoning: string,
-      confidence?: number,
-      timestamp: string
-    }
-  ],
-  processedAt: string;
+  // Transparency & Auditability
+  auditTrail: Array<{
+    step: string;                 // e.g., "RECALL", "APPLY", "DECIDE"
+    action: string;               // e.g., "VENDOR_MATCHED", "RULE_APPLIED"
+    field?: string;               // Field being modified
+    oldValue?: any;               // Previous value
+    newValue?: any;               // New value
+    reasoning: string;            // Why this action was taken
+    confidence?: number;          // Confidence for this action
+    timestamp: string;            // ISO timestamp
+  }>;
+  
+  processedAt: string;            // When processing completed
 }
 ```
+
+**Key Properties:**
+- **requiresHumanReview**: `true` if confidence < 0.80, new vendor, critical fields missing, or duplicate detected
+- **reasoning**: Explains why review is/isn't needed
+- **confidence**: Average confidence across all fields (with Laplace smoothing)
+- **auditTrail**: Complete trace of every decision made during processing
+
 
 ## 🧪 Testing
 
 ```bash
-# Run full demo
+# Run production demo (12 real invoices)
+npm run demo:prod
+
+# Run quick demo (original test data)
 npm run demo
 
 # Build TypeScript
 npm run build
 
-# Development mode
-npm run dev
+# Type check only
+npx tsc --noEmit
 ```
 
 ## 🎓 Key Concepts
@@ -298,4 +351,3 @@ Based on the architectural blueprint:
 
 ---
 
-**Built with ❤️ following the AI Document Automation Memory Layer Blueprint**
